@@ -1,0 +1,318 @@
+basePath: /api/v2
+definitions:
+  parser.Faculty:
+    properties:
+      longName:
+        type: string
+      shortName:
+        type: string
+    type: object
+  visualizer.CurrentWeek:
+    properties:
+      currentWeek:
+        type: integer
+    type: object
+  visualizer.Event:
+    properties:
+      beginWeek:
+        type: integer
+      course:
+        type: string
+      dayOfWeek:
+        type: integer
+      duration:
+        type: integer
+      endWeek:
+        type: integer
+      group:
+        $ref: '#/definitions/visualizer.Group'
+        type: object
+      professor:
+        type: string
+      room:
+        type: string
+      startTime:
+        type: string
+      type:
+        type: string
+    type: object
+  visualizer.Group:
+    properties:
+      field:
+        type: string
+      subGroup:
+        type: string
+      type:
+        type: string
+      year:
+        type: integer
+    type: object
+  visualizer.GroupWithYears:
+    properties:
+      name:
+        type: string
+      years:
+        items:
+          type: integer
+        type: array
+    type: object
+host: api.urnik-mb.cf
+info:
+  contact: {}
+  description: Urnik Mariborske Univerze (UMU) je projekt katerega cilj je, da študentom
+    UM nudi boljšo storitev za urnik kot je WiseTimeTables.
+  license:
+    name: GPL 2.0
+    url: https://opensource.org/licenses/gpl-2.0.php
+  termsOfService: http://swagger.io/terms/
+  title: Swagger za UMU REST API
+  version: "2.0"
+paths:
+  /courses/{faculty}:
+    get:
+      description: GetKnownCourses
+      parameters:
+      - description: Faculty
+        in: path
+        name: faculty
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Returns the list of all available courses in a specific faculty.
+  /faculties:
+    get:
+      description: GetFaculties
+      operationId: get-string-by-int
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/parser.Faculty'
+            type: array
+      summary: Returns the list of all available faculties.
+  /groups/{faculty}:
+    get:
+      description: GetGroups
+      parameters:
+      - description: Faculty
+        in: path
+        name: faculty
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Returns an array of Groups in a specific faculty.
+  /groups/{faculty}/years:
+    get:
+      description: GetGroupsWithYears
+      parameters:
+      - description: Faculty
+        in: path
+        name: faculty
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/visualizer.GroupWithYears'
+            type: array
+      summary: Returns an array of Groups with years in a specific faculty.
+  /professors/{faculty}:
+    get:
+      description: GetKnownProfessors
+      parameters:
+      - description: Faculty
+        in: path
+        name: faculty
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Returns an array of professors in a specific faculty.
+  /schedule/course/{faculty}/{name}:
+    get:
+      description: TimetableByCourse
+      parameters:
+      - description: Faculty
+        in: path
+        name: faculty
+        required: true
+        type: string
+      - description: Name of course
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/visualizer.Event'
+            type: array
+      summary: Returns the schedule for a specific course.
+  /schedule/faculty/{faculty}:
+    get:
+      description: GetAllOfFaculty
+      parameters:
+      - description: Faculty
+        in: path
+        name: faculty
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/visualizer.Event'
+            type: array
+      summary: Returns the schedules of all groups in the faculty.
+  /schedule/faculty/{faculty}/{type}:
+    get:
+      description: TimetableByGroupType
+      parameters:
+      - description: Faculty
+        in: path
+        name: faculty
+        required: true
+        type: string
+      - description: Type
+        in: path
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/visualizer.Event'
+            type: array
+      summary: Returns the schedule for a specific Group Type.
+  /schedule/faculty/{faculty}/{type}/{year}:
+    get:
+      description: TimetableByGroupTypeAndYear
+      parameters:
+      - description: Faculty
+        in: path
+        name: faculty
+        required: true
+        type: string
+      - description: Type
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: Year
+        in: path
+        name: year
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/visualizer.Event'
+            type: array
+      summary: Returns the schedule for a specific Group Type and year.
+  /schedule/professor/{faculty}/{type}:
+    get:
+      description: TimetableByProfessor
+      parameters:
+      - description: Faculty
+        in: path
+        name: faculty
+        required: true
+        type: string
+      - description: Name of professor
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/visualizer.Event'
+            type: array
+      summary: Returns the schedule for a specific professor.
+  /week:
+    get:
+      description: GetCurrentWeek
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/visualizer.CurrentWeek'
+      summary: Returns the current week number.
+  /years/{faculty}/{type}:
+    get:
+      description: GetYearsOfType
+      parameters:
+      - description: Faculty
+        in: path
+        name: faculty
+        required: true
+        type: string
+      - description: Type
+        in: path
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+      summary: Returns an array of years in a specific group type.
+swagger: "2.0"
+x-extension-openapi:
+  example: value on a json format
